@@ -2,7 +2,7 @@ import axios from 'axios';
 import { load } from 'cheerio';
 
 
-const reseracherId = "LbgTPRwAAAAJ"; //"fvOYgyAAAAAJ";
+const reseracherId = "fvOYgyAAAAAJ"; // "LbgTPRwAAAAJ";
 const baseUrl = "https://scholar.google.com/citations?user={0}&hl=en&cstart={1}&pagesize=100"
 const debugMode = true;
 
@@ -21,7 +21,7 @@ function _createUrl(researcherId, start) {
     return baseUrl.replace("{0}", researcherId).replace("{1}", start)
 }
 
-async function fetch(researcherId, maxPapers=100) {
+async function fetch_papers(researcherId, maxPapers = 100) {
     print("- Google Scholar fetch started -")
     let data = []
     let lastData = null;
@@ -29,34 +29,35 @@ async function fetch(researcherId, maxPapers=100) {
 
     for (let round = 0; round < maxPapers; round = round + STEP) {
 
-        let reseracherUrl = _createUrl(researcherId, round)
+        let reseracherUrl = _createUrl(researcherId, round);
         print("Created url ", reseracherUrl)
 
         let request = await axios.get(reseracherUrl);
         if (request.status != 200) {
-            console.error("Unable to get content from " + reseracherUrl)
+            console.error("Unable to get content from " + reseracherUrl);
             return;
         }
         let currData = request.data;
 
         let researcherData = _parse(currData);
         if (researcherData.length > 0) {
-            let lastElement = researcherData[researcherData.length-1].title;
+            let lastElement = researcherData[researcherData.length - 1].title;
             if (lastData != lastElement) {
                 data.push(researcherData);
                 lastData = lastElement;
             }
-            else{
+            else {
                 break;
             }
         }
-        else{
+        else {
             break;
         }
     }
     data = data.flat(1);
-    print(`Found ${data.length} papers`)
-    print("- Google Scholar fetch ended -")
+    print(`Found ${data.length} papers`);
+    print("- Google Scholar fetch ended -");
+    return data;
 }
 
 
@@ -116,6 +117,12 @@ function _parse(html) {
 ///
 // MAIN
 if (debugMode) {
-    fetch(reseracherId)
+    (async () => {
+        console.log("Getting ", reseracherId)
+        let data = []
+        await fetch_papers(reseracherId).then((d)=>{data = d;})    
+        console.log(data)
+        console.log("Done")
+    })();
 }
 ///

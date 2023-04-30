@@ -1,0 +1,27 @@
+<html>
+<head>
+    <title>Google Scholar Test</title>
+    <meta charset="utf-8" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.3.6/dist/axios.min.js"></script>
+    <script type="module">
+        import { load } from 'https://cdn.jsdelivr.net/npm/cheerio@1.0.0-rc.12/+esm'
+    </script>
+    
+    <script type="module" src="main.js"></script>
+    <script type="text/javascript">
+        async function getData(researcherId) {
+            console.log(researcherId);
+            let data = await fetch_papers(researcherId);
+            console.log(data);
+        }
+    </script>
+</head>
+
+<body>
+    <p>Testing Google Scholar</p>
+    <form>
+        <input type="button" value="click" onclick="getData('fvOYgyAAAAAJ')" />
+    </form>
+</body>
+</html>
