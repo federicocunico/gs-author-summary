@@ -1,12 +1,11 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 
-
+const debugMode = true;
 const reseracherId = "fvOYgyAAAAAJ"; // "LbgTPRwAAAAJ";
 const baseUrl = "https://scholar.google.com/citations?user={0}&hl=en&cstart={1}&pagesize=100"
-const debugMode = true;
 
-function print() {
+function log(debugMode = true) {
     if (debugMode) {
         let outStr = "";
         for (let index = 0; index < arguments.length; index++) {
@@ -22,7 +21,7 @@ function _createUrl(researcherId, start) {
 }
 
 async function fetch_papers(researcherId, maxPapers = 100) {
-    print("- Google Scholar fetch started -")
+    log("- Google Scholar fetch started -")
     let data = []
     let lastData = null;
     let STEP = 100 // maximum supported by scholar
@@ -30,7 +29,7 @@ async function fetch_papers(researcherId, maxPapers = 100) {
     for (let round = 0; round < maxPapers; round = round + STEP) {
 
         let reseracherUrl = _createUrl(researcherId, round);
-        print("Created url ", reseracherUrl)
+        log("Created url ", reseracherUrl)
 
         let request = await axios.get(reseracherUrl);
         if (request.status != 200) {
@@ -55,8 +54,8 @@ async function fetch_papers(researcherId, maxPapers = 100) {
         }
     }
     data = data.flat(1);
-    print(`Found ${data.length} papers`);
-    print("- Google Scholar fetch ended -");
+    log(`Found ${data.length} papers`);
+    log("- Google Scholar fetch ended -");
     return data;
 }
 
@@ -120,9 +119,8 @@ if (debugMode) {
     (async () => {
         console.log("Getting ", reseracherId)
         let data = []
-        await fetch_papers(reseracherId).then((d)=>{data = d;})    
+        await fetch_papers(reseracherId).then((d) => { data = d; })
         console.log(data)
         console.log("Done")
     })();
 }
-///
